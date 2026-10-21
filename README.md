@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ND AI 3D Club
 
-## Getting Started
+The club website. A gallery of 3D work made by members, rendered live in the
+browser so you can spin each model instead of looking at a screenshot.
 
-First, run the development server:
+Built with Next.js, Tailwind, and Three.js (via React Three Fiber).
 
-```bash
+## Run it
+
+You need either Node 22+ installed, or nothing at all if you use Codespaces.
+
+### In your browser (nothing to install)
+
+Click the green **Code** button at the top of this repo, open the
+**Codespaces** tab, and click **Create codespace on main**. Wait about a
+minute. Dependencies install themselves. Then in the terminal at the bottom:
+
+```
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A popup offers to open the site. Click it.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### On your own machine
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+git clone https://github.com/andywu1115/nd-club-site.git
+cd nd-club-site
+npm install
+npm run dev
+```
 
-## Learn More
+Open http://localhost:3000
 
-To learn more about Next.js, take a look at the following resources:
+## Add your model to the gallery
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This is the part that needs no coding. Two steps.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**1. Put your file in `public/models/`**
 
-## Deploy on Vercel
+Export from Tripo as **GLB**. Name it in lowercase with dashes, like
+`vintage-camera.glb`. Follow the asset standards in the pipeline doc first
+(ask in GroupMe for the link) so the page stays fast.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**2. Add a block to `data/gallery.json`**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Copy an existing block, change the values, and keep the commas correct:
+
+```json
+{
+  "id": "vintage-camera",
+  "title": "Vintage Camera",
+  "creator": "Your Name",
+  "caption": "One sentence about what you were going for.",
+  "file": "/models/vintage-camera.glb",
+  "date": "2026-10-15"
+}
+```
+
+`id` must be unique. `file` always starts with `/models/`. Save, and the page
+updates by itself.
+
+## Project layout
+
+```
+app/
+  page.tsx                   the gallery page
+  components/
+    ModelViewer.tsx          the 3D canvas, one model
+    GalleryCard.tsx          viewer plus title, creator, caption
+  api/tripo/
+    generate/route.ts        submits a generation job, server side only
+    task/[id]/route.ts       polls that job
+data/
+  gallery.json               THE file you edit to add work
+public/models/               the .glb files themselves
+```
+
+## The API key
+
+`TRIPO_API_KEY` lives in `.env.local`, which is gitignored and never committed.
+Copy `.env.example` to `.env.local` and paste the key in. You only need this if
+you are working on the generation routes; the gallery runs fine without it.
+
+The key is read only inside `app/api/`, which runs on the server. It is never
+sent to the browser. Do not move it into a component or rename it with a
+`NEXT_PUBLIC_` prefix, because either one would publish it to every visitor.
+
+## Contributing
+
+Small changes can go straight to `main`. If you are changing how a component
+works, open a branch and a pull request so someone else sees it first.

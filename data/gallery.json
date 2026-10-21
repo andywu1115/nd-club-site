@@ -1,0 +1,12 @@
+{
+  "models": [
+    {
+      "id": "sample-camera",
+      "title": "Vintage Camera",
+      "creator": "Andy Wu",
+      "caption": "Chunky and retro, brushed metal and cream plastic.",
+      "file": "/model.glb",
+      "date": "2026-10-15"
+    }
+  ]
+}
